@@ -4,27 +4,63 @@ declare(strict_types=1);
 
 namespace Pollen\Debug;
 
-class PhpDebugBarDriver extends DebugDriver
+use DebugBar\DataCollector\ConfigCollector;
+use DebugBar\DataCollector\ExceptionsCollector;
+use DebugBar\DataCollector\MemoryCollector;
+use DebugBar\DataCollector\MessagesCollector;
+use DebugBar\DataCollector\PhpInfoCollector;
+use DebugBar\DataCollector\RequestDataCollector;
+use DebugBar\DataCollector\TimeDataCollector;
+use DebugBar\DebugBar;
+use DebugBar\DebugBarException;
+use DebugBar\JavascriptRenderer;
+use Pollen\Http\UrlHelper;
+
+class PhpDebugBarDriver extends DebugBar implements DebugBarInterface
 {
     /**
-     * {@inheritDoc}
-     *
-     * @return PhpDebugBar|null
+     * @var DebugManagerInterface
      */
-    public function adapter(): ?object
+    protected $debugManager;
+
+    /**
+     * @param DebugManagerInterface $debugManager
+     */
+    public function __construct(DebugManagerInterface $debugManager)
     {
-        if (is_null($this->adapter)) {
-            $this->adapter = (new PhpDebugBar($this))->getJavascriptRenderer();
+        $this->debugManager = $debugManager;
+
+        try {
+            $this->addCollector(new PhpInfoCollector());
+            $this->addCollector(new MessagesCollector());
+            $this->addCollector(new ConfigCollector());
+            $this->addCollector(new RequestDataCollector());
+            $this->addCollector(new TimeDataCollector());
+            $this->addCollector(new MemoryCollector());
+            $this->addCollector(new ExceptionsCollector());
+        } catch (DebugBarException $e) {
+            unset($e);
         }
-        return $this->adapter;
+
+        $this->jsRenderer = new JavascriptRenderer(
+            $this, (new UrlHelper())->getAbsoluteUrl('/vendor/maximebf/debugbar/src/DebugBar/Resources')
+        );
     }
 
     /**
      * @inheritDoc
      */
-    public function getHead(): string
+    public function renderFooter(): string
     {
-        return $this->adapter()->renderHead();
+        return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function renderHead(): string
+    {
+        return $this->getJavascriptRenderer()->renderHead();
     }
 
     /**
@@ -32,6 +68,6 @@ class PhpDebugBarDriver extends DebugDriver
      */
     public function render(): string
     {
-        return $this->adapter()->render();
+        return $this->getJavascriptRenderer()->render();
     }
 }

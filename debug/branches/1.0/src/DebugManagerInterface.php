@@ -19,30 +19,17 @@ interface DebugManagerInterface
     public function boot(): DebugManagerInterface;
 
     /**
-     * Instance du pilote associé.
+     * Instance du pilote de barre de débogage.
      *
-     * @return DebugDriverInterface
+     * @return DebugBarInterface
      */
-    public function driver(): DebugDriverInterface;
+    public function debugBar(): DebugBarInterface;
+
 
     /**
-     * Récupération du pied de page du site.
+     * Instance du gestionnaire d'erreurs.
      *
-     * @return string
+     * @return object
      */
-    public function getFooter(): string;
-
-    /**
-     * Récupération de l'entête du site.
-     *
-     * @return string
-     */
-    public function getHead(): string;
-
-    /**
-     * Récupération du rendu de l'affichage.
-     *
-     * @return string
-     */
-    public function render(): string;
+    public function errorHandler(): object;
 }

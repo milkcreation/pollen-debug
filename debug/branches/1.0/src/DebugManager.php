@@ -9,7 +9,6 @@ use Pollen\Support\Concerns\ConfigBagTrait;
 use Pollen\Support\Concerns\ContainerAwareTrait;
 use Psr\Container\ContainerInterface as Container;
 use Whoops\Run as ErrorHandler;
-use Whoops\Handler\PrettyPageHandler as ErrorHandlerRenderer;
 use Pollen\Support\Env;
 
 class DebugManager implements DebugManagerInterface
@@ -19,10 +18,16 @@ class DebugManager implements DebugManagerInterface
     use ContainerAwareTrait;
 
     /**
-     * Instance du pilote associé.
-     * @var DebugDriverInterface
+     * Instance du gestionnaire d'erreurs.
+     * @var object
      */
-    private $driver;
+    protected $errorHandler;
+
+    /**
+     * Instance du pilote de barre de débogage.
+     * @var DebugBarInterface
+     */
+    protected $debugBar;
 
     /**
      * @param array $config
@@ -37,6 +42,10 @@ class DebugManager implements DebugManagerInterface
         if (!is_null($container)) {
             $this->setContainer($container);
         }
+
+        if ($this->config('boot_enabled', true)) {
+            $this->boot();
+        }
     }
 
     /**
@@ -45,13 +54,12 @@ class DebugManager implements DebugManagerInterface
     public function boot(): DebugManagerInterface
     {
         if (!$this->isBooted()) {
-            if (Env::isDev()) {
-                $handler = new ErrorHandlerRenderer();
-                $handler->setEditor('phpstorm');
+            if ($this->config('debug_bar.enabled', Env::isDev())) {
+                $this->debugBar();
+            }
 
-                (new ErrorHandler())
-                    ->pushHandler($handler)
-                    ->register();
+            if ($this->config('error_handler.enabled', Env::isDev())) {
+                $this->errorHandler();
             }
 
             $this->setBooted();
@@ -63,38 +71,25 @@ class DebugManager implements DebugManagerInterface
     /**
      * @inheritDoc
      */
-    public function driver(): DebugDriverInterface
+    public function debugBar(): DebugBarInterface
     {
-        if (is_null($this->driver)) {
-            $this->driver = $this->containerHas(DebugDriverInterface::class)
-                ? $this->containerGet(DebugDriverInterface::class)
-                : new DebugDriver($this);
+        if ($this->debugBar === null) {
+            $this->debugBar = new PhpDebugBarDriver($this);
         }
 
-        return $this->driver;
+        return $this->debugBar;
     }
 
     /**
      * @inheritDoc
      */
-    public function getFooter(): string
+    public function errorHandler(): object
     {
-        return $this->driver()->getFooter();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getHead(): string
-    {
-        return $this->driver()->getHead();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function render(): string
-    {
-        return $this->driver()->render();
+        if ($this->errorHandler === null) {
+            $this->errorHandler  = (new ErrorHandler())
+                    ->pushHandler(new WhoopsErrorHandlerRenderer($this))
+                    ->register();
+        }
+        return $this->errorHandler;
     }
 }
