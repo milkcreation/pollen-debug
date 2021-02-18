@@ -5,19 +5,11 @@ declare(strict_types=1);
 namespace Pollen\Debug;
 
 /**
- * @mixin \Pollen\Support\Concerns\BootableTrait
  * @mixin \Pollen\Support\Concerns\ConfigBagTrait
  * @mixin \Pollen\Support\Concerns\ContainerAwareTrait
  */
 interface DebugManagerInterface
 {
-    /**
-     * Chargement.
-     *
-     * @return static
-     */
-    public function boot(): DebugManagerInterface;
-
     /**
      * Instance du pilote de barre de débogage.
      *
@@ -29,7 +21,7 @@ interface DebugManagerInterface
     /**
      * Instance du gestionnaire d'erreurs.
      *
-     * @return object
+     * @return ErrorHandlerInterface
      */
-    public function errorHandler(): object;
+    public function errorHandler(): ErrorHandlerInterface;
 }

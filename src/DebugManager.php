@@ -4,17 +4,14 @@ declare(strict_types=1);
 
 namespace Pollen\Debug;
 
-use Pollen\Support\Concerns\BootableTrait;
 use Pollen\Support\Concerns\ConfigBagTrait;
 use Pollen\Support\Concerns\ContainerAwareTrait;
 use Psr\Container\ContainerInterface as Container;
-use Whoops\Run as ErrorHandler;
-use Pollen\Support\Env;
+
 
 class DebugManager implements DebugManagerInterface
 {
     use ConfigBagTrait;
-    use BootableTrait;
     use ContainerAwareTrait;
 
     /**
@@ -42,30 +39,6 @@ class DebugManager implements DebugManagerInterface
         if (!is_null($container)) {
             $this->setContainer($container);
         }
-
-        if ($this->config('boot_enabled', true)) {
-            $this->boot();
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function boot(): DebugManagerInterface
-    {
-        if (!$this->isBooted()) {
-            if ($this->config('debug_bar.enabled', Env::isDev())) {
-                $this->debugBar();
-            }
-
-            if ($this->config('error_handler.enabled', Env::isDev())) {
-                $this->errorHandler();
-            }
-
-            $this->setBooted();
-        }
-
-        return $this;
     }
 
     /**
@@ -74,7 +47,8 @@ class DebugManager implements DebugManagerInterface
     public function debugBar(): DebugBarInterface
     {
         if ($this->debugBar === null) {
-            $this->debugBar = new PhpDebugBarDriver($this);
+            $this->debugBar = $this->containerHas(DebugBarInterface::class)
+            ? $this->containerGet(DebugBarInterface::class) : new PhpDebugBarDriver($this);
         }
 
         return $this->debugBar;
@@ -83,12 +57,11 @@ class DebugManager implements DebugManagerInterface
     /**
      * @inheritDoc
      */
-    public function errorHandler(): object
+    public function errorHandler(): ErrorHandlerInterface
     {
         if ($this->errorHandler === null) {
-            $this->errorHandler  = (new ErrorHandler())
-                    ->pushHandler(new WhoopsErrorHandlerRenderer($this))
-                    ->register();
+            $this->errorHandler = $this->containerHas(ErrorHandlerInterface::class)
+               ? $this->containerGet(ErrorHandlerInterface::class) : new WhoopsErrorHandler($this);
         }
         return $this->errorHandler;
     }
