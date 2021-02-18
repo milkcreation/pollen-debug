@@ -19,6 +19,12 @@ use Pollen\Http\UrlHelper;
 class PhpDebugBarDriver extends DebugBar implements DebugBarInterface
 {
     /**
+     * Indicateur d'activation.
+     * @var bool
+     */
+    protected $enabled = false;
+
+    /**
      * @var DebugManagerInterface
      */
     protected $debugManager;
@@ -50,6 +56,27 @@ class PhpDebugBarDriver extends DebugBar implements DebugBarInterface
     /**
      * @inheritDoc
      */
+    public function enable(): DebugBarInterface
+    {
+        $this->enabled = true;
+
+        return $this;
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function disable(): DebugBarInterface
+    {
+        $this->enabled = false;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function renderFooter(): string
     {
         return '';
@@ -60,7 +87,7 @@ class PhpDebugBarDriver extends DebugBar implements DebugBarInterface
      */
     public function renderHead(): string
     {
-        return $this->getJavascriptRenderer()->renderHead();
+        return $this->enabled ? $this->getJavascriptRenderer()->renderHead(): '';
     }
 
     /**
@@ -68,6 +95,6 @@ class PhpDebugBarDriver extends DebugBar implements DebugBarInterface
      */
     public function render(): string
     {
-        return $this->getJavascriptRenderer()->render();
+        return $this->enabled ? $this->getJavascriptRenderer()->render() : '';
     }
 }

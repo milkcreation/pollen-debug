@@ -11,3 +11,62 @@ Pollen **Debug** Component provides a collection of tools dedicated to debugging
 ```bash
 composer require pollen-solutions/debug
 ```
+
+## Basic Usage
+
+### ErrorHandler
+
+```php
+use Pollen\Debug\DebugManager;
+
+// DebugManager instantiation
+$debug = new DebugManager();
+
+// ErrorHandler activation
+$debug->errorHandler()->enable();
+
+// ErrorHandler test
+function errorHandlerTest()
+{
+    throw new InvalidArgumentException('Test de Whoops');
+}
+errorHandlerTest();
+```
+
+### DebugBar
+
+```php
+use Pollen\Debug\DebugManager;
+
+// DebugManager instantiation
+$debug = new DebugManager();
+
+// DebugBar activation
+$debug->debugBar()->enable();
+
+// DebugBar test
+echo <<< HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Debug Bar Test</title>
+HTML;
+
+// DebugBar head assets
+echo $debug->debugBar()->renderHead();
+
+echo <<< HTML
+</head>
+<body>
+HTML;
+
+// DebugBar render
+echo $debug->debugBar()->render();
+
+echo <<< HTML
+</body>
+</html>
+HTML;
+exit;
+```

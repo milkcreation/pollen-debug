@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Pollen\Debug;
 
 use Pollen\Container\BaseServiceProvider;
-use Whoops\Run as WhoopsErrorHandler;
 
 class DebugServiceProvider extends BaseServiceProvider
 {
@@ -14,8 +13,8 @@ class DebugServiceProvider extends BaseServiceProvider
      */
     protected $provides = [
         DebugManagerInterface::class,
-        //DebugBarInterface::class,
-        //ErrorHandlerInterface::class,
+        DebugBarInterface::class,
+        ErrorHandlerInterface::class,
     ];
 
     /**
@@ -30,7 +29,6 @@ class DebugServiceProvider extends BaseServiceProvider
             }
         );
 
-        /*
         $this->getContainer()->add(
             DebugBarInterface::class,
             function () {
@@ -41,12 +39,8 @@ class DebugServiceProvider extends BaseServiceProvider
         $this->getContainer()->share(
             ErrorHandlerInterface::class,
             function () {
-                return (new WhoopsErrorHandler())
-                    ->pushHandler(
-                        new WhoopsErrorHandlerRenderer($this->getContainer()->get(DebugManagerInterface::class))
-                    )->register();
+                return new WhoopsErrorHandler($this->getContainer()->get(DebugManagerInterface::class));
             }
         );
-        */
     }
 }
