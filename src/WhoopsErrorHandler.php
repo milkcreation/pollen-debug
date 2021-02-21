@@ -51,7 +51,8 @@ class WhoopsErrorHandler implements ErrorHandlerInterface
         } catch (Throwable $e) {
             throw new BadMethodCallException(
                 sprintf(
-                    'Cookie Instance method call [%s] throws an exception: %s',
+                    "Delegate [%s] method call [%s] throws an exception: %s",
+                    Run::class,
                     $method,
                     $e->getMessage()
                 )
