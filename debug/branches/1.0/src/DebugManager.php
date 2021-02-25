@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Pollen\Debug;
 
-use Pollen\Support\Concerns\ConfigBagTrait;
+use Pollen\Support\Concerns\ConfigBagAwareTrait;
 use Pollen\Support\Concerns\ContainerAwareTrait;
 use Psr\Container\ContainerInterface as Container;
 
 
 class DebugManager implements DebugManagerInterface
 {
-    use ConfigBagTrait;
+    use ConfigBagAwareTrait;
     use ContainerAwareTrait;
 
     /**
