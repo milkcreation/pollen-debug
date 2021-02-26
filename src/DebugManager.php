@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Pollen\Debug;
 
 use Pollen\Support\Concerns\ConfigBagAwareTrait;
-use Pollen\Support\Concerns\ContainerAwareTrait;
+use Pollen\Support\Proxy\ContainerProxy;
 use Psr\Container\ContainerInterface as Container;
-
 
 class DebugManager implements DebugManagerInterface
 {
     use ConfigBagAwareTrait;
-    use ContainerAwareTrait;
+    use ContainerProxy;
 
     /**
      * Instance du gestionnaire d'erreurs.

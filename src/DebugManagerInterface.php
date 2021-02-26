@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Pollen\Debug;
 
-/**
- * @mixin \Pollen\Support\Concerns\ConfigBagAwareTrait
- * @mixin \Pollen\Support\Concerns\ContainerAwareTrait
- */
-interface DebugManagerInterface
+use Pollen\Support\Concerns\ConfigBagAwareTraitInterface;
+use Pollen\Support\Proxy\ContainerProxyInterface;
+
+interface DebugManagerInterface extends ContainerProxyInterface, ConfigBagAwareTraitInterface
 {
     /**
      * Instance du pilote de barre de débogage.

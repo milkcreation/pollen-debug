@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Pollen\Debug;
 
 use BadMethodCallException;
+use Exception;
+use Throwable;
 use Whoops\Run;
 use Whoops\Handler\PrettyPageHandler;
-use Throwable;
 
 class WhoopsErrorHandler implements ErrorHandlerInterface
 {
@@ -43,11 +44,15 @@ class WhoopsErrorHandler implements ErrorHandlerInterface
      * @param array $arguments
      *
      * @return mixed
+     *
+     * @throws Exception
      */
     public function __call(string $method, array $arguments)
     {
         try {
             return $this->whoops->{$method}(...$arguments);
+        } catch (Exception $e) {
+            throw $e;
         } catch (Throwable $e) {
             throw new BadMethodCallException(
                 sprintf(
@@ -55,7 +60,7 @@ class WhoopsErrorHandler implements ErrorHandlerInterface
                     Run::class,
                     $method,
                     $e->getMessage()
-                )
+                ), 0, $e
             );
         }
     }
