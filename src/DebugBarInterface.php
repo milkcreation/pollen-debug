@@ -21,6 +21,13 @@ interface DebugBarInterface
     public function disable(): DebugBarInterface;
 
     /**
+     * Vérification d'activation.
+     *
+     * @return bool
+     */
+    public function isEnabled(): bool;
+
+    /**
      * Récupération du pied de page du site
      *
      * @return string
