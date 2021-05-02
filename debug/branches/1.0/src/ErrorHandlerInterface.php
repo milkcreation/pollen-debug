@@ -19,4 +19,11 @@ interface ErrorHandlerInterface
      * @return static
      */
     public function disable(): ErrorHandlerInterface;
+
+    /**
+     * Vérification d'activation.
+     *
+     * @return bool
+     */
+    public function isEnabled(): bool;
 }

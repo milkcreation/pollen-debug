@@ -18,11 +18,7 @@ use Pollen\Http\UrlHelper;
 
 class PhpDebugBarDriver extends DebugBar implements DebugBarInterface
 {
-    /**
-     * Indicateur d'activation.
-     * @var bool
-     */
-    protected $enabled = false;
+    use DebugBarAwareTrait;
 
     /**
      * @var DebugManagerInterface
@@ -51,27 +47,6 @@ class PhpDebugBarDriver extends DebugBar implements DebugBarInterface
         $this->jsRenderer = new JavascriptRenderer(
             $this, (new UrlHelper())->getAbsoluteUrl('/vendor/maximebf/debugbar/src/DebugBar/Resources')
         );
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function enable(): DebugBarInterface
-    {
-        $this->enabled = true;
-
-        return $this;
-    }
-
-
-    /**
-     * @inheritDoc
-     */
-    public function disable(): DebugBarInterface
-    {
-        $this->enabled = false;
-
-        return $this;
     }
 
     /**

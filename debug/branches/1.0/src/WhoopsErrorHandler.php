@@ -12,11 +12,7 @@ use Whoops\Handler\PrettyPageHandler;
 
 class WhoopsErrorHandler implements ErrorHandlerInterface
 {
-    /**
-     * Indicateur d'activation.
-     * @var bool
-     */
-    protected $enabled = false;
+    use ErrorHandlerAwareTrait;
 
     /**
      * @var DebugManagerInterface
@@ -74,6 +70,7 @@ class WhoopsErrorHandler implements ErrorHandlerInterface
             $this->whoops->pushHandler(new PrettyPageHandler());
         }
 
+        $this->enabled = true;
         $this->whoops->register();
 
         return $this;
@@ -84,6 +81,7 @@ class WhoopsErrorHandler implements ErrorHandlerInterface
      */
     public function disable(): ErrorHandlerInterface
     {
+        $this->enabled = false;
         $this->whoops->unregister();
 
         return $this;
