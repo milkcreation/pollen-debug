@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Pollen\Debug;
 
-use Pollen\Support\StaticProxy;
+use Pollen\Support\ProxyResolver;
 use RuntimeException;
 
 /**
@@ -29,7 +29,7 @@ trait DebugProxy
             try {
                 $this->debugManager = DebugManager::getInstance();
             } catch (RuntimeException $e) {
-                $this->debugManager = StaticProxy::getProxyInstance(
+                $this->debugManager = ProxyResolver::getInstance(
                     DebugManagerInterface::class,
                     DebugManager::class,
                     method_exists($this, 'getContainer') ? $this->getContainer() : null
