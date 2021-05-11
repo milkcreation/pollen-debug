@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Pollen\Debug;
 
-use Pollen\Container\BaseServiceProvider;
+use Pollen\Container\BootableServiceProvider;
 
-class DebugServiceProvider extends BaseServiceProvider
+class DebugServiceProvider extends BootableServiceProvider
 {
     /**
      * @var string[]
