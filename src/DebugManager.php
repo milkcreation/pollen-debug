@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pollen\Debug;
 
+use Pollen\Support\Concerns\BootableTrait;
 use Pollen\Support\Concerns\ConfigBagAwareTrait;
 use Pollen\Support\Exception\ManagerRuntimeException;
 use Pollen\Support\Proxy\ContainerProxy;
@@ -11,26 +12,21 @@ use Psr\Container\ContainerInterface as Container;
 
 class DebugManager implements DebugManagerInterface
 {
+    use BootableTrait;
     use ConfigBagAwareTrait;
     use ContainerProxy;
 
-    /**
-     * Instance principale.
-     * @var static|null
-     */
-    private static $instance;
+    private static ?DebugManagerInterface $instance = null;
 
     /**
      * Instance du gestionnaire d'erreurs.
-     * @var object
      */
-    protected $errorHandler;
+    protected ?object $errorHandler = null;
 
     /**
      * Instance du pilote de barre de débogage.
-     * @var DebugBarInterface
      */
-    protected $debugBar;
+    protected ?DebugBarInterface $debugBar = null;
 
     /**
      * @param array $config
@@ -49,6 +45,8 @@ class DebugManager implements DebugManagerInterface
         if (!self::$instance instanceof static) {
             self::$instance = $this;
         }
+
+        $this->boot();
     }
 
     /**
@@ -62,6 +60,16 @@ class DebugManager implements DebugManagerInterface
             return self::$instance;
         }
         throw new ManagerRuntimeException(sprintf('Unavailable [%s] instance', __CLASS__));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function boot(): void
+    {
+        if (!$this->isBooted()) {
+            $this->setBooted();
+        }
     }
 
     /**

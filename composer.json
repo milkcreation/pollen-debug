@@ -8,7 +8,7 @@
     "debug"
   ],
   "type": "presstify-component",
-  "time": "2020-05-11",
+  "time": "2021-06-23",
   "license": "MIT",
   "authors": [
     {
@@ -30,6 +30,7 @@
     "maximebf/debugbar": "^1.16",
     "pollen-solutions/http": "^1.0",
     "pollen-solutions/support": "^1.0",
+    "pollen-solutions/routing": "^1.0",
     "symfony/error-handler": "^5.2",
     "symfony/var-dumper" : "^5.2"
   },

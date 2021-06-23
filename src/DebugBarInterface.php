@@ -35,11 +35,18 @@ interface DebugBarInterface
     public function renderFooter(): string;
 
     /**
-     * Récupération de l'entête du site
+     * Récupération du rendu des feuilles de styles CSS.
      *
      * @return string
      */
-    public function renderHead(): string;
+    public function renderHeadCss(): string;
+
+    /**
+     * Récupération du rendu des feuilles de scripts JS.
+     *
+     * @return string
+     */
+    public function renderHeadJs(): string;
 
     /**
      * Récupération du rendu de l'affichage

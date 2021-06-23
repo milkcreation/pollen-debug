@@ -13,17 +13,20 @@ use DebugBar\DataCollector\RequestDataCollector;
 use DebugBar\DataCollector\TimeDataCollector;
 use DebugBar\DebugBar;
 use DebugBar\DebugBarException;
-use DebugBar\JavascriptRenderer;
-use Pollen\Http\UrlHelper;
+use Pollen\Debug\Controller\PhpDebugBarAssetController;
+use Pollen\Routing\RouteInterface;
+use Pollen\Support\Proxy\RouterProxy;
 
 class PhpDebugBarDriver extends DebugBar implements DebugBarInterface
 {
     use DebugBarAwareTrait;
+    use RouterProxy;
 
-    /**
-     * @var DebugManagerInterface
-     */
-    protected $debugManager;
+    protected DebugManagerInterface $debugManager;
+
+    protected ?RouteInterface $debugBarJsRoute = null;
+
+    protected ?RouteInterface $debugBarCssRoute = null;
 
     /**
      * @param DebugManagerInterface $debugManager
@@ -44,9 +47,25 @@ class PhpDebugBarDriver extends DebugBar implements DebugBarInterface
             unset($e);
         }
 
-        $this->jsRenderer = new JavascriptRenderer(
-            $this, (new UrlHelper())->getAbsoluteUrl('/vendor/maximebf/debugbar/src/DebugBar/Resources')
+        $routePrefix = '_debugbar';
+
+        $this->debugBarJsRoute = $this->router()->get(
+            "$routePrefix/js", [PhpDebugBarAssetController::class, 'js']
         );
+        $this->debugBarCssRoute = $this->router()->get(
+            "$routePrefix/css", [PhpDebugBarAssetController::class, 'css']
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getJavascriptRenderer($baseUrl = null, $basePath = null)
+    {
+        if ($this->jsRenderer === null) {
+            $this->jsRenderer = new PhpDebugBarJavascriptRender($this, $baseUrl, $basePath);
+        }
+        return $this->jsRenderer;
     }
 
     /**
@@ -60,9 +79,28 @@ class PhpDebugBarDriver extends DebugBar implements DebugBarInterface
     /**
      * @inheritDoc
      */
-    public function renderHead(): string
+    public function renderHeadCss(): string
     {
-        return $this->enabled ? $this->getJavascriptRenderer()->renderHead(): '';
+        $href = $this->router()->getRouteUrl($this->debugBarCssRoute);
+
+        return "<link rel=\"stylesheet\" type=\"text/css\" href=\"$href\">";
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function renderHeadJs(): string
+    {
+        $src = $this->router()->getRouteUrl($this->debugBarJsRoute);
+
+        $output = "<script type=\"text/javascript\" src=\"$src\"></script>";
+
+        $renderer = $this->getJavascriptRenderer();
+        if ($renderer->isJqueryNoConflictEnabled() && !$renderer->isRequireJsUsed()) {
+            $output .= "<script type=\"text/javascript\">jQuery.noConflict(true);</script>\n";
+        }
+
+        return $output;
     }
 
     /**
@@ -70,6 +108,6 @@ class PhpDebugBarDriver extends DebugBar implements DebugBarInterface
      */
     public function render(): string
     {
-        return $this->enabled ? $this->getJavascriptRenderer()->render() : '';
+        return $this->getJavascriptRenderer()->render();
     }
 }
