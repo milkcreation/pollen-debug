@@ -14,15 +14,9 @@ class WhoopsErrorHandler implements ErrorHandlerInterface
 {
     use ErrorHandlerAwareTrait;
 
-    /**
-     * @var DebugManagerInterface
-     */
-    protected $debugManager;
+    protected ?DebugManagerInterface $debugManager = null;
 
-    /**
-     * @var Run
-     */
-    private $whoops;
+    private Run $whoops;
 
     /**
      * @param DebugManagerInterface $debugManager

@@ -11,9 +11,8 @@ trait ErrorHandlerAwareTrait
 {
     /**
      * Indicateur d'activation.
-     * @var bool
      */
-    protected $enabled = false;
+    protected bool $enabled = false;
 
     /**
      * Activation.
