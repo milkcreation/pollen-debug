@@ -13,13 +13,20 @@ use DebugBar\DataCollector\RequestDataCollector;
 use DebugBar\DataCollector\TimeDataCollector;
 use DebugBar\DebugBar;
 use DebugBar\DebugBarException;
+use Pollen\Asset\AssetManagerInterface;
+use Pollen\Asset\AssetQueue;
+use Pollen\Asset\Assets\CdnAsset;
+use Pollen\Asset\Assets\InlineAsset;
 use Pollen\Debug\Controller\PhpDebugBarAssetController;
+use Pollen\Event\TriggeredEvent;
 use Pollen\Routing\RouteInterface;
+use Pollen\Support\Proxy\EventProxy;
 use Pollen\Support\Proxy\RouterProxy;
 
 class PhpDebugBarDriver extends DebugBar implements DebugBarInterface
 {
     use DebugBarAwareTrait;
+    use EventProxy;
     use RouterProxy;
 
     protected DebugManagerInterface $debugManager;
@@ -50,11 +57,53 @@ class PhpDebugBarDriver extends DebugBar implements DebugBarInterface
         $routePrefix = '_debugbar';
 
         $this->debugBarJsRoute = $this->router()->get(
-            "$routePrefix/js", [PhpDebugBarAssetController::class, 'js']
+            "$routePrefix/js",
+            [PhpDebugBarAssetController::class, 'js']
         );
         $this->debugBarCssRoute = $this->router()->get(
-            "$routePrefix/css", [PhpDebugBarAssetController::class, 'css']
+            "$routePrefix/css",
+            [PhpDebugBarAssetController::class, 'css']
         );
+
+        if ($this->debugManager->config('asset.autoloader', true) === true) {
+            $this->event()->one(
+                'asset.handle-head.before',
+                function (TriggeredEvent $event, AssetManagerInterface $assetManager) {
+                    $assetManager->enqueueCss(
+                        new CdnAsset('debugbar-css', $this->router()->getRouteUrl($this->debugBarCssRoute, [], true)),
+                        [],
+                        AssetQueue::LOW
+                    )
+                        ->setBefore('<!-- Debug Bar -->')
+                        ->setAfter('<!-- / Debug Bar -->');
+                }
+            );
+
+            $this->event()->one(
+                'asset.handle-footer.before',
+                function (TriggeredEvent $event, AssetManagerInterface $assetManager) {
+                    $assetManager->enqueueJs(
+                        new CdnAsset('debugbar-js', $this->router()->getRouteUrl($this->debugBarJsRoute, [], true)),
+                        true,
+                        [],
+                        AssetQueue::LOW
+                    )->setBefore('<!-- Debug Bar -->');
+
+                    $renderer = $this->getJavascriptRenderer();
+                    if ($renderer->isJqueryNoConflictEnabled() && !$renderer->isRequireJsUsed()) {
+                        $assetManager->enqueueJs(
+                            new InlineAsset('debugbar-jquery_noconflict', 'jQuery.noConflict(true);'),
+                            true,
+                            [],
+                            AssetQueue::LOW
+                        );
+                    }
+
+                    $assetManager->enqueueHtml($this->getJavascriptRenderer()->render(), true, -101)
+                        ->setAfter('<!-- / Debug Bar -->');
+                }
+            );
+        }
     }
 
     /**
@@ -83,7 +132,7 @@ class PhpDebugBarDriver extends DebugBar implements DebugBarInterface
     {
         $href = $this->router()->getRouteUrl($this->debugBarCssRoute);
 
-        return "<link rel=\"stylesheet\" type=\"text/css\" href=\"$href\">";
+        return "<link rel=\"stylesheet\" type=\"text/css\" href=\"$href\">\n";
     }
 
     /**
@@ -93,7 +142,7 @@ class PhpDebugBarDriver extends DebugBar implements DebugBarInterface
     {
         $src = $this->router()->getRouteUrl($this->debugBarJsRoute);
 
-        $output = "<script type=\"text/javascript\" src=\"$src\"></script>";
+        $output = "<script type=\"text/javascript\" src=\"$src\"></script>\n";
 
         $renderer = $this->getJavascriptRenderer();
         if ($renderer->isJqueryNoConflictEnabled() && !$renderer->isRequireJsUsed()) {
