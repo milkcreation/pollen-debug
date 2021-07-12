@@ -7,21 +7,21 @@ namespace Pollen\Debug;
 interface ErrorHandlerInterface
 {
     /**
-     * Activation.
+     * Enabling.
      *
      * @return static
      */
     public function enable(): ErrorHandlerInterface;
 
     /**
-     * Désactivation
+     * Disabling.
      *
      * @return static
      */
     public function disable(): ErrorHandlerInterface;
 
     /**
-     * Vérification d'activation.
+     * Checks if its enabled.
      *
      * @return bool
      */

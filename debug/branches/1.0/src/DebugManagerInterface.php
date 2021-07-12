@@ -14,14 +14,14 @@ interface DebugManagerInterface extends
     ConfigBagAwareTraitInterface
 {
     /**
-     * Chargement.
+     * Booting.
      *
      * @return void
      */
     public function boot(): void;
 
     /**
-     * Instance du pilote de barre de débogage.
+     * Debug bar instance.
      *
      * @return DebugBarInterface
      */
@@ -29,7 +29,7 @@ interface DebugManagerInterface extends
 
 
     /**
-     * Instance du gestionnaire d'erreurs.
+     * Error handler instance.
      *
      * @return ErrorHandlerInterface
      */

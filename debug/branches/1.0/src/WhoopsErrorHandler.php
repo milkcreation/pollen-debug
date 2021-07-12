@@ -28,7 +28,7 @@ class WhoopsErrorHandler implements ErrorHandlerInterface
     }
 
     /**
-     * Délégation d'appel des méthodes de Whoops.
+     * Delegate call of Whoops instance methods.
      *
      * @param string $method
      * @param array $arguments
