@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace Pollen\Debug;
 
-use Pollen\Container\BootableServiceProvider;
+use Pollen\Container\ServiceProvider;
 
-class DebugServiceProvider extends BootableServiceProvider
+class DebugServiceProvider extends ServiceProvider
 {
-    /**
-     * @var string[]
-     */
     protected $provides = [
         DebugManagerInterface::class,
         DebugBarInterface::class,

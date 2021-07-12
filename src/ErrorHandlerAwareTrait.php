@@ -10,12 +10,13 @@ namespace Pollen\Debug;
 trait ErrorHandlerAwareTrait
 {
     /**
-     * Indicateur d'activation.
+     * Enabling indicator.
+     * @var bool
      */
     protected bool $enabled = false;
 
     /**
-     * Activation.
+     * Enabling.
      *
      * @return ErrorHandlerInterface|static
      */
@@ -27,7 +28,7 @@ trait ErrorHandlerAwareTrait
     }
 
     /**
-     * Desactivation.
+     * Disabling.
      *
      * @return ErrorHandlerInterface|static
      */
@@ -39,7 +40,7 @@ trait ErrorHandlerAwareTrait
     }
 
     /**
-     * Vérification d'activation.
+     * Checks if its enabled.
      *
      * @return bool
      */

@@ -7,49 +7,49 @@ namespace Pollen\Debug;
 interface DebugBarInterface
 {
     /**
-     * Activation.
+     * Enabling.
      *
      * @return static
      */
     public function enable(): DebugBarInterface;
 
     /**
-     * Désactivation
+     * Disabling.
      *
      * @return static
      */
     public function disable(): DebugBarInterface;
 
     /**
-     * Vérification d'activation.
+     * Checks if its enabled.
      *
      * @return bool
      */
     public function isEnabled(): bool;
 
     /**
-     * Récupération du pied de page du site
+     * HTML page footer render.
      *
      * @return string
      */
     public function renderFooter(): string;
 
     /**
-     * Récupération du rendu des feuilles de styles CSS.
+     * HTML page head CSS render.
      *
      * @return string
      */
     public function renderHeadCss(): string;
 
     /**
-     * Récupération du rendu des feuilles de scripts JS.
+     * HTML page head JS render.
      *
      * @return string
      */
     public function renderHeadJs(): string;
 
     /**
-     * Récupération du rendu de l'affichage
+     * HTML page bar render.
      *
      * @return string
      */

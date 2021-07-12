@@ -10,12 +10,13 @@ namespace Pollen\Debug;
 trait DebugBarAwareTrait
 {
     /**
-     * Indicateur d'activation.
+     * Enabling indicator.
+     * @var bool
      */
     protected bool $enabled = false;
 
     /**
-     * Activation.
+     * Enabling.
      *
      * @return DebugBarInterface|static
      */
@@ -27,7 +28,7 @@ trait DebugBarAwareTrait
     }
 
     /**
-     * Desactivation.
+     * Disabling.
      *
      * @return DebugBarInterface|static
      */
@@ -39,7 +40,7 @@ trait DebugBarAwareTrait
     }
 
     /**
-     * Vérification d'activation.
+     * Checks if its enabled.
      *
      * @return bool
      */

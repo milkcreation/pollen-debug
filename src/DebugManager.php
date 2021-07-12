@@ -16,15 +16,21 @@ class DebugManager implements DebugManagerInterface
     use ConfigBagAwareTrait;
     use ContainerProxy;
 
+    /**
+     * Debug manager main instance.
+     * @var DebugManagerInterface|null
+     */
     private static ?DebugManagerInterface $instance = null;
 
     /**
-     * Instance du gestionnaire d'erreurs.
+     * Error handler instance.
+     * @var object|null
      */
     protected ?object $errorHandler = null;
 
     /**
-     * Instance du pilote de barre de débogage.
+     * Debug bar instance.
+     * @var DebugBarInterface|null
      */
     protected ?DebugBarInterface $debugBar = null;
 
@@ -50,7 +56,7 @@ class DebugManager implements DebugManagerInterface
     }
 
     /**
-     * Récupération de l'instance principale.
+     * Retrieve debug manager main instance.
      *
      * @return static
      */
