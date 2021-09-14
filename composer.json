@@ -1,14 +1,14 @@
 {
   "name": "pollen-solutions/debug",
   "description": "Pollen Solutions - Debug Component - Collection of debugging tools.",
-  "homepage": "https://www.presstify.com/pollen-solutions/debug/",
+  "homepage": "https://github.com/milkcreation/pollen-debug.git",
   "keywords": [
     "presstify",
     "components",
     "debug"
   ],
   "type": "presstify-component",
-  "time": "2021-07-09",
+  "time": "2021-09-14",
   "license": "MIT",
   "authors": [
     {
